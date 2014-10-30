@@ -2,7 +2,6 @@ package main
 
 import (
 	"testing"
-	"bytes"
 )
 
 func TestParity(t *testing.T) {
@@ -34,11 +33,11 @@ func TestDesparity(t *testing.T) {
 }
 
 func TestKeys(t *testing.T) {
-	var expected_enc = []byte{
+	var expected_enc = [16]byte{
 		0xab, 0x94, 0xfd, 0xec, 0xf2, 0x67, 0x4f, 0xdf,
 		0xb9, 0xb3, 0x91, 0xf8, 0x5d, 0x7f, 0x76, 0xf2,
 	}
-	var expected_mac = []byte{
+	var expected_mac = [16]byte{
 		0x79, 0x62, 0xd9, 0xec, 0xe0, 0x3d, 0x1a, 0xcd,
 		0x4c, 0x76, 0x08, 0x9d, 0xce, 0x13, 0x15, 0x43,
 	}
@@ -48,10 +47,10 @@ func TestKeys(t *testing.T) {
 		expiry   = "9406236"
 	)
 	enc, mac := GetBACKeys(passport, dob, expiry)
-	if !bytes.Equal(enc, expected_enc) {
+	if enc != expected_enc {
 		t.Fail()
 	}
-	if !bytes.Equal(mac, expected_mac) {
+	if mac != expected_mac {
 		t.Fail()
 	}
 

@@ -26,24 +26,28 @@ func init() {
 	}
 }
 
-func key(seed []byte, suffix []byte) []byte {
-	buf := make([]byte, 20, 20)
-	copy(buf, seed)
-	copy(buf[16:], suffix)	
 
-	h0 := sha1.Sum(buf)
-	h := h0[:16]
 
-	for i, v := range h {
-		h[i] = desParity[v]
+func key(seed [20]byte, suffix [4]byte) [16]byte {
+	var res [16]byte
+
+	buf := make([]byte, 20)
+	copy(buf, seed[:16])
+	copy(buf[16:], suffix[:])
+
+	h := sha1.Sum(buf)
+	copy(res[:], h[:16])
+
+	for i, v := range res {
+		res[i] = desParity[v]
 	}
-	return h
+	return res
 }
 
-func GetBACKeys(passport, dob, expiry string) (enc, mac []byte) {
+func GetBACKeys(passport, dob, expiry string) (enc, mac [16]byte) {
 	seed := sha1.Sum([]byte(passport + dob + expiry))
-	enc = key(seed[:16], []byte{0, 0, 0, 1})
-	mac = key(seed[:16], []byte{0, 0, 0, 2})
+	enc = key(seed, [4]byte{0, 0, 0, 1})
+	mac = key(seed, [4]byte{0, 0, 0, 2})
 
 	return enc, mac
 }
